@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.MainGame;
 
+import static com.mygdx.game.MainGame.playScreen;
+
 public class Hud {
     public Stage stage;
     private Viewport viewport;
@@ -19,10 +21,12 @@ public class Hud {
     private float timeCount;
     private Integer score;
 
-    Label countdownLabel;
+    Label currentHealthLabel;
     Label timeLabel;
     Label scoreLabel;
-    Label marioLabel;
+    Label healthLabel;
+    Label levelLabel;
+    Label worldLabel;
 
     public Hud(SpriteBatch batch){
         worldTimer = 300;
@@ -35,24 +39,27 @@ public class Hud {
         Table table = new Table();
         table.top();
         table.setFillParent(true);
+        currentHealthLabel = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        timeLabel = new Label("",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        scoreLabel = new Label("", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        healthLabel = new Label("PLAYER",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        levelLabel = new Label("",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        worldLabel = new Label("",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        Label countdownLabel = new Label(String.format("%03d",worldTimer), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label timeLabel = new Label("TIME",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label scoreLabel = new Label(String.format("%06d",score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label marioLabel = new Label("PLAYER",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label levelLabel = new Label("1-1",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        Label worldLabel = new Label("WORLD",new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-
-        table.add(marioLabel).expandX().padTop(10);
+        table.add(healthLabel).expandX().padTop(10);
         table.add(worldLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
         table.row();
-        table.add(countdownLabel).expandX();
+        table.add(currentHealthLabel).expandX();
         table.add(levelLabel).expandX();
         table.add(scoreLabel).expandX();
 
         stage.addActor(table);
     }
 
+
+    public void update(){
+        currentHealthLabel.setText(String.format("%d/%d",playScreen.player.currentHealth,playScreen.player.maxHealth));
+    }
 }
