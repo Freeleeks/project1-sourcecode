@@ -20,6 +20,7 @@ public class MainGame extends Game {
 	public static final short SWORD_BIT = 8;
 	public static final short ENEMY_BIT = 16;
 	public static final short DEAD_BIT = 32;
+	public static final short BLOCK_BIT = 64;
 
 	@Override
 	public void create () {

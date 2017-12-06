@@ -45,6 +45,7 @@ public class PlayScreen implements Screen {
 
 
     public Hud hud;
+    private boolean isDebugRenderOn;
 
     public PlayScreen(MainGame game) {
         this.game = game;
@@ -93,6 +94,9 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
             System.exit(0);
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.D)){
+            isDebugRenderOn = !isDebugRenderOn;
+        }
     }
 
     public void removeEnemy(Enemy enemy){
@@ -123,8 +127,9 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         renderer.render();
-        debugRenderer.render(world, camera.combined);
-
+        if (isDebugRenderOn) {
+            debugRenderer.render(world, camera.combined);
+        }
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         player.draw(batch);

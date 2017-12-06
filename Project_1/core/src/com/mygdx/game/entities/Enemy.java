@@ -28,6 +28,7 @@ public class Enemy extends Sprite {
     public Body body;
     private float enemyTimer,speed;
     private int health;
+
     public Enemy(World world, float x, float y){
         this.world = world;
 
@@ -52,6 +53,8 @@ public class Enemy extends Sprite {
         aggroFixtureDef.isSensor = true;
         aggroFixtureDef.filter.categoryBits = MainGame.AGGRO_BIT;
         body.createFixture(aggroFixtureDef).setUserData(this);
+
+
 
 
 
@@ -84,6 +87,7 @@ public class Enemy extends Sprite {
                 fixture.setFilterData(filter);
         }
     }
+
     private void setState(State state) {
         this.state = state;
     }
@@ -102,6 +106,10 @@ public class Enemy extends Sprite {
 
     public void setChasing() {
         setState(State.CHASING);
+    }
+
+    public void stop() {
+        body.setLinearVelocity(0,0);
     }
 
     public enum State{

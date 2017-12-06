@@ -6,11 +6,54 @@ import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Player;
 
 public class WorldContactListener implements ContactListener{
+
+
+    private enum ContactType{
+        BEGINCONTACT,ENDCONTACT
+    }
+    ContactType contactType;
+
+    public void setContactType(ContactType contactType) {
+        this.contactType = contactType;
+    }
+
+    public ContactType getContactType() {
+        return contactType;
+    }
+
     @Override
     public void beginContact(Contact contact) {
+        setContactType(ContactType.BEGINCONTACT);
         swordContact(contact);
         aggroContact(contact);
         enemyContact(contact);
+        bubbleContact(contact,getContactType());
+    }
+
+
+
+    @Override
+    public void endContact(Contact contact) {
+        setContactType(ContactType.ENDCONTACT);
+        bubbleContact(contact,getContactType());
+
+    }
+
+    private void bubbleContact(Contact contact, ContactType contactType){
+        Fixture fixA = contact.getFixtureA();
+        Fixture fixB = contact.getFixtureB();
+        if(fixA.getFilterData().categoryBits == MainGame.BLOCK_BIT || fixB.getFilterData().categoryBits == MainGame.BLOCK_BIT){
+            Fixture shield = fixA.getFilterData().categoryBits == MainGame.ENEMY_BIT ? fixA : fixB;
+            Fixture object = shield == fixA ? fixB : fixA;
+            if (object.getUserData() != null && Enemy.class.isAssignableFrom(object.getUserData().getClass())){
+                if(contactType.equals(ContactType.BEGINCONTACT)) {
+                    ((Enemy) object.getUserData()).bounceBack();
+                }else{
+                    ((Enemy) object.getUserData()).stop();
+                }
+            }
+        }
+
     }
 
     private void enemyContact(Contact contact) {
@@ -50,10 +93,6 @@ public class WorldContactListener implements ContactListener{
                 ((Enemy) object.getUserData()).bounceBack();
             }
         }
-    }
-
-    @Override
-    public void endContact(Contact contact) {
     }
 
     @Override
