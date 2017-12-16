@@ -5,6 +5,10 @@ import com.mygdx.game.MainGame;
 import com.mygdx.game.entities.Enemy;
 import com.mygdx.game.entities.Player;
 
+import static com.mygdx.game.MainGame.beachHouseScreen;
+import static com.mygdx.game.MainGame.playScreen;
+import static com.mygdx.game.MainGame.player;
+
 public class WorldContactListener implements ContactListener{
 
 
@@ -27,6 +31,7 @@ public class WorldContactListener implements ContactListener{
         swordContact(contact);
         aggroContact(contact);
         enemyContact(contact);
+        transitionContact(contact);
         bubbleContact(contact,getContactType());
     }
 
@@ -65,6 +70,28 @@ public class WorldContactListener implements ContactListener{
             if (object.getUserData() != null && Player.class.isAssignableFrom(object.getUserData().getClass())){
                 ((Player) object.getUserData()).takeDamage();
                 ((Enemy) enemy.getUserData()).bounceBack();
+            }
+        }
+    }
+
+    private void transitionContact(Contact contact) {
+        Fixture fixA = contact.getFixtureA();
+        Fixture fixB = contact.getFixtureB();
+        if(fixA.getUserData() == ("transition") || fixB.getUserData() == ("transition")){
+            Fixture transition = fixA.getUserData().equals("transition") ? fixA : fixB;
+            Fixture object = transition == fixA ? fixB : fixA;
+            if (object.getUserData() != null && Player.class.isAssignableFrom(object.getUserData().getClass())){
+                char whichTransition =  transition.getBody().getUserData().toString().charAt(0);
+                switch(whichTransition){
+                    case '1' :
+                        beachHouseScreen.dispose();
+                        beachHouseScreen.game.setScreen(playScreen);
+                        playScreen.createPlayer();
+                        player.body.setTransform(745,170,0);
+                        player.setFacing(Player.Facing.DOWN);
+
+                        break;
+                }
             }
         }
     }

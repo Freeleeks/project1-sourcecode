@@ -11,6 +11,8 @@ public class DesktopLauncher {
 		config.width = 1366;
 		config.height = 768;
 		config.fullscreen = true;
+		config.vSyncEnabled = true;
+
 
 	}
 }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.MainGame;
 
 import static com.mygdx.game.MainGame.playScreen;
+import static com.mygdx.game.MainGame.player;
 
 public class Hud {
     public Stage stage;
@@ -60,6 +61,6 @@ public class Hud {
 
 
     public void update(){
-        currentHealthLabel.setText(String.format("%d/%d",playScreen.player.currentHealth,playScreen.player.maxHealth));
+        currentHealthLabel.setText(String.format("%d/%d",player.currentHealth,player.maxHealth));
     }
 }

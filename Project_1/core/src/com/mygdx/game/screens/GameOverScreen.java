@@ -10,10 +10,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.MainGame;
+import com.mygdx.game.scenes.Hud;
 
-import static com.mygdx.game.MainGame.V_HEIGHT;
-import static com.mygdx.game.MainGame.V_WIDTH;
-import static com.mygdx.game.MainGame.batch;
+import static com.mygdx.game.MainGame.*;
 
 
 public class GameOverScreen implements Screen{
@@ -26,8 +25,10 @@ public class GameOverScreen implements Screen{
         this.game = game;
         camera = new OrthographicCamera();
         viewport = new FitViewport(404, 228, camera);
+        viewport.apply();
         font = new BitmapFont();
         camera.position.set(viewport.getWorldWidth() / 2, viewport.getWorldHeight() / 2, 0);
+        camera.update();
     }
     @Override
     public void show() {
@@ -38,16 +39,24 @@ public class GameOverScreen implements Screen{
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
             System.exit(0);
         }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
+            playScreen = new PlayScreen(game);
+            game.setScreen(playScreen);
+            playScreen.hud = new Hud(batch);
+            game.resetPlayerStats();
+        }
     }
 
     private void update(float delta){
         handleInput(delta);
         camera.update();
+
     }
 
     @Override
     public void render(float delta) {
         update(delta);
+
         Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -57,7 +66,7 @@ public class GameOverScreen implements Screen{
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(int width, int height) {viewport.update(width,height);
 
     }
 

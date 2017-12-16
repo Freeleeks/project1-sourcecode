@@ -13,11 +13,14 @@ import static com.mygdx.game.MainGame.playScreen;
 public class Player extends Sprite {
 
     //Animation
-    private TextureRegion[] walkDownFrames,walkLeftFrames,walkRightFrames,walkUpFrames, blockFrames;
+    private TextureRegion[] walkDownFrames,walkLeftFrames,walkRightFrames,walkUpFrames, blockFrames, attackDownFrames
+            ,attackUpFrames,attackLeftFrames,attackRightFrames;
     private TextureRegion idle;
-    private Animation<TextureRegion> walkDownAnimation,walkUpAnimation,walkLeftAnimation,walkRightAnimation, blockAnimation,currentFrame;
-    private static final int FRAME_COLS = 4, FRAME_ROWS = 4,SHIELD_FRAME_COLS = 3,SHIELD_FRAME_ROWS = 2;
-    private float attackTimer, attackSpeed, blockTimer, blockSpeed, blockAnimationTimer;
+    private Animation<TextureRegion> walkDownAnimation,walkUpAnimation,walkLeftAnimation,walkRightAnimation,
+            blockAnimation,currentFrame,
+            attackUpAnimation,attackDownAnimation,attackLeftAnimation,attackRightAnimation;
+    private static final int FRAME_COLS = 4, FRAME_ROWS = 4, ATTACK_FRAME_COLS = 6, ATTACK_FRAME_ROWS = 4, SHIELD_FRAME_COLS = 3,SHIELD_FRAME_ROWS = 2;
+    private float attackTimer, attackSpeed, blockTimer, blockSpeed, blockAnimationTimer,attackAnimationTimer;
     public int currentHealth, maxHealth;
     Texture blockSheet;
 
@@ -33,12 +36,12 @@ public class Player extends Sprite {
 
         //Define collision
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(100,100);
+        bodyDef.position.set(100, 100);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         FixtureDef fixtureDef = new FixtureDef();
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(8,8);
+        shape.setAsBox(8, 8);
         fixtureDef.shape = shape;
         fixtureDef.filter.categoryBits = MainGame.PLAYER_BIT;
         fixtureDef.filter.maskBits = MainGame.DEFAULT_BIT | MainGame.ENEMY_BIT | MainGame.AGGRO_BIT;
@@ -77,19 +80,19 @@ public class Player extends Sprite {
 
 
         swordSprite = new Sprite(new Texture("sword.png"));
-        attackSpeed = 1/3f;
+        attackSpeed = 1f;
         blockSpeed = 1f;
-        swordSprite.setOrigin(0,0);
+        swordSprite.setOrigin(0, 0);
 
         //Define Walking animation
         Texture walkSheet = new Texture("knight.png");
         TextureRegion[][] tmp = TextureRegion.split(walkSheet,
                 walkSheet.getWidth() / FRAME_COLS,
                 walkSheet.getHeight() / FRAME_ROWS);
-        walkDownFrames = tmp[0];
-        walkLeftFrames = tmp[1];
-        walkRightFrames = tmp[2];
         walkUpFrames = tmp[3];
+        walkLeftFrames = tmp[1];
+        walkDownFrames = tmp[0];
+        walkRightFrames = tmp[2];
 
         walkDownAnimation = new Animation<TextureRegion>(0.25f, walkDownFrames);
         walkUpAnimation = new Animation<TextureRegion>(0.25f, walkUpFrames);
@@ -113,6 +116,8 @@ public class Player extends Sprite {
         blockAnimation = new Animation<TextureRegion>(0.2f, blockFrames);
     }
 
+    public void setWorld(World world){
+    }
 
 
     public enum State{
@@ -149,12 +154,12 @@ public class Player extends Sprite {
                 break;
             case ATTACKING:
                 batch.draw(idle,body.getPosition().x-11,body.getPosition().y-8);
-                swordSprite.draw(batch, 10);
+                attackAnimationTimer +=Gdx.graphics.getDeltaTime();
                 break;
             case BLOCKING:
                 blockAnimationTimer +=Gdx.graphics.getDeltaTime();
                 batch.draw(idle,body.getPosition().x-11,body.getPosition().y-8);
-                batch.draw(blockAnimation.getKeyFrame(blockAnimationTimer,true), blockBody.getPosition().x- blockSheet.getWidth()/6, blockBody.getPosition().y- blockSheet.getHeight()/4);
+                batch.draw(blockAnimation.getKeyFrame(blockAnimationTimer,true), blockBody.getPosition().x- blockSheet.getWidth()/6, blockBody.getPosition().y- blockSheet.getHeight()/4+5);
         }
     }
 
@@ -196,7 +201,8 @@ public class Player extends Sprite {
             case DEAD:
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.Z)){
-            if (attackTimer>attackSpeed) {
+            if (attackTimer>attackSpeed && !getState().equals(State.BLOCKING)) {
+                attackAnimationTimer = 0;
                 attackTimer = 0;
                 setState(State.ATTACKING);
                 attack();
@@ -222,54 +228,46 @@ public class Player extends Sprite {
         if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
             setFacing(Facing.UP);
             currentFrame = walkUpAnimation;
-            idle = walkUpFrames[3];
+            idle = walkUpFrames[1];
             body.setLinearVelocity(0, speed);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             setFacing(Facing.DOWN);
             currentFrame = walkDownAnimation;
-            idle = walkDownFrames[3];
+            idle = walkDownFrames[1];
             body.setLinearVelocity(0, -speed);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
             setFacing(Facing.RIGHT);
             currentFrame = walkRightAnimation;
-            idle = walkRightFrames[3];
+            idle = walkRightFrames[1];
             body.setLinearVelocity(speed, 0);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             setFacing(Facing.LEFT);
             currentFrame = walkLeftAnimation;
-            idle = walkLeftFrames[3];
+            idle = walkLeftFrames[1];
             body.setLinearVelocity(-speed, 0);
         }
         if (!Gdx.input.isKeyPressed(Input.Keys.LEFT) && !Gdx.input.isKeyPressed(Input.Keys.RIGHT) && !Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             setState(Player.State.IDLE);
             body.setLinearVelocity(0, 0);
-
         } else {
             setState(Player.State.WALKING);
         }
     }
 
     private void attack() {
+        body.setLinearVelocity(0, 0);
         swordBody.setActive(true);
         switch(facing){
             case UP:
-                swordSprite.setRotation(0);
-                swordSprite.setPosition(body.getPosition().x,body.getPosition().y+10);
                 break;
             case DOWN:
-                swordSprite.setRotation(180);
-                swordSprite.setPosition(body.getPosition().x,body.getPosition().y-10);
                 break;
             case LEFT:
-                swordSprite.setRotation(90);
-                swordSprite.setPosition(body.getPosition().x-10,body.getPosition().y);
                 break;
             case RIGHT:
-                swordSprite.setRotation(270);
-                swordSprite.setPosition(body.getPosition().x+10,body.getPosition().y);
                 break;
         }
     }

@@ -142,8 +142,8 @@ public class Enemy extends Sprite {
     }
 
     public void bounceBack(){
-        float deltaX = MainGame.playScreen.player.body.getPosition().x-this.body.getPosition().x;
-        float deltaY = MainGame.playScreen.player.body.getPosition().y-this.body.getPosition().y;
+        float deltaX = MainGame.player.body.getPosition().x-this.body.getPosition().x;
+        float deltaY = MainGame.player.body.getPosition().y-this.body.getPosition().y;
         float coeffX = -deltaX/(abs(deltaX)+abs(deltaY));
         float coeffY = -deltaY/(abs(deltaX)+abs(deltaY));
         this.body.setLinearVelocity(700*coeffX,700*coeffY);
@@ -214,8 +214,8 @@ public class Enemy extends Sprite {
     }
 
     private void chasing() {
-        float deltaX = MainGame.playScreen.player.body.getPosition().x-body.getPosition().x;
-        float deltaY = MainGame.playScreen.player.body.getPosition().y-body.getPosition().y;
+        float deltaX = MainGame.player.body.getPosition().x-body.getPosition().x;
+        float deltaY = MainGame.player.body.getPosition().y-body.getPosition().y;
         float coeffX = deltaX/(abs(deltaX)+abs(deltaY));
         float coeffY = deltaY/(abs(deltaX)+abs(deltaY));
         body.setLinearVelocity(speed*coeffX,speed*coeffY);
