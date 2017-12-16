@@ -36,7 +36,7 @@ public class Player extends Sprite {
 
         //Define collision
         BodyDef bodyDef = new BodyDef();
-        bodyDef.position.set(100, 100);
+       // bodyDef.position.set(100, 100);
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         body = world.createBody(bodyDef);
         FixtureDef fixtureDef = new FixtureDef();
@@ -168,6 +168,7 @@ public class Player extends Sprite {
         if (currentHealth<=0){
             setState(State.DEAD);
             playScreen.game.setScreen(new GameOverScreen(MainGame.playScreen.game));
+            playScreen.dispose();
         }
     }
 

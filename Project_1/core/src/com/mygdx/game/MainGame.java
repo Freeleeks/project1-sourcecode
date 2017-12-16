@@ -7,10 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.entities.Player;
 import com.mygdx.game.scenes.Hud;
-import com.mygdx.game.screens.BeachHouseScreen;
-import com.mygdx.game.screens.OldHouseScreen;
-import com.mygdx.game.screens.PlayScreen;
-import com.mygdx.game.screens.ShopHouseScreen;
+import com.mygdx.game.screens.*;
 
 public class MainGame extends Game {
 	public static final int V_WIDTH = 600;
@@ -23,7 +20,7 @@ public class MainGame extends Game {
 	public static BeachHouseScreen beachHouseScreen;
 	public static ShopHouseScreen shopHouseScreen;
 	public static OldHouseScreen oldHouseScreen;
-
+	public static StartMenu startMenu;
 	public static final short DEFAULT_BIT = 1;
 	public static final short PLAYER_BIT = 2;
 	public static final short AGGRO_BIT = 4;
@@ -41,11 +38,13 @@ public class MainGame extends Game {
 	public void create () {
 		resetPlayerStats();
 		batch = new SpriteBatch();
+		startMenu = new StartMenu(this);
 		playScreen = new PlayScreen(this);
 		beachHouseScreen = new BeachHouseScreen(this);
 		shopHouseScreen = new ShopHouseScreen(this);
 		oldHouseScreen = new OldHouseScreen(this);
-		setScreen(beachHouseScreen);
+		//startMenu = new StartMenu(this);
+		setScreen(startMenu);
 		playScreen.hud = new Hud(batch);
 		stateTime=0;
 	}
