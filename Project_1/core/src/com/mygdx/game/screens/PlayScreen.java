@@ -3,6 +3,7 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
@@ -38,6 +39,7 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
     private int[] backGroundLayers = {0,1,2,3,4,5,6};
     private int[] foreGroundLayers = {7,8,9};
+    private Music music;
 
 
     private Box2DDebugRenderer debugRenderer;
@@ -79,8 +81,11 @@ public class PlayScreen implements Screen {
             fixtureDef.shape = shape;
             body.createFixture(fixtureDef);
         }
-
-
+        music = Gdx.audio.newMusic(Gdx.files.internal("Golly_Gee.mp3"));
+        music.setLooping(true);
+        music.setVolume(0.2f);
+        music.play();
+        //player = new Player(world);
         enemies = SpawnGenerator.spawnEnemy(world,map);
         world.setContactListener(new WorldContactListener());
 
@@ -173,7 +178,7 @@ public class PlayScreen implements Screen {
 
     @Override
     public void dispose() {
-
+music.dispose();
     }
 
     private void cameraInBounds(TiledMap map) {
